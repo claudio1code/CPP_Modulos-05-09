@@ -10,7 +10,7 @@ CXX = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
 
-SRCS = Bureucrat.cpp main.cpp
+SRCS = Bureaucrat.cpp main.cpp
 OBJS_DIR = objs/
 
 OBJS = $(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))

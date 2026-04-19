@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 20:29:01 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 21:09:53 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/18 21:28:54 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int                 Bureaucrat::getGrade() const {
     return (_grade);
 }
 
-void                Bureaucrat::icrementGrade() {
+void                Bureaucrat::incrementGrade() {
     if (_grade == 1)
         throw GradeTooHighException();
     _grade--;
@@ -57,7 +57,7 @@ const char	*Bureaucrat::GradeTooLowException::what() const throw() {
     return ("Grade is too Low!");
 }
 
-std::ostream& ::operator<<(std::ostream& os, const Bureaucrat& obj) {
-    os << obj.getName() << "bureaucrat with classificate " << obj.getGrade();
+std::ostream& operator<<(std::ostream& os, const Bureaucrat& obj) {
+    os << obj.getName() << " bureaucrat with classificate " << obj.getGrade();
     return (os);
 }

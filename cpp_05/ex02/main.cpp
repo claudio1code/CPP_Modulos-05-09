@@ -6,54 +6,65 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 21:18:41 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 23:18:12 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/18 23:56:17 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Bureaucrat.hpp"
-#include "AForm.hpp"
+#include "ShrubberyCreationForm.hpp"
+#include "RobotomyRequestForm.hpp"
+#include "PresidentialPardonForm.hpp"
 
 int main() {
-    std::cout << "\n--- TESTE 1: Exceções no Construtor do AForm ---" << std::endl;
-    try {
-        AForm f1("Contrato Secreto", 0, 50);
-    } catch (std::exception &e) {;
-        std::cerr << "Erro esperado capturado: " << e.what() << std::endl;
-    }
-
-    try {
-        AForm f2("Formulario do Lixo", 151, 50);
-    } catch (std::exception &e) {
-        std::cerr << "Erro esperado capturado: " << e.what() << std::endl;
-    }
-
-    std::cout << "\n--- TESTE 2: Assinatura com Sucesso ---" << std::endl;
+    std::cout << "\n--- TESTE 1: SHRUBBERY CREATION FORM ---" << std::endl;
     try {
         Bureaucrat chefe("Zaphod", 1);
-        AForm formA("Aumento de Salario", 10, 5);
-        std::cout << formA << std::endl;
-        
-        chefe.signAForm(formA);
-        
-        std::cout << formA << std::endl;
+        Bureaucrat estagiario("Arthur", 140);
+        ShrubberyCreationForm tree("Jardim");
+
+        std::cout << tree << std::endl;
+
+        estagiario.executeForm(tree);
+
+        estagiario.signForm(tree);
+
+        estagiario.executeForm(tree);
+
+        chefe.executeForm(tree);
     } catch (std::exception &e) {
-        std::cerr << "Erro inesperado: " << e.what() << std::endl;
+        std::cerr << "Erro fatal: " << e.what() << std::endl;
     }
 
-    std::cout << "\n--- TESTE 3: Assinatura Recusada (Nota muito baixa) ---" << std::endl;
+    std::cout << "\n--- TESTE 2: ROBOTOMY REQUEST FORM ---" << std::endl;
     try {
-        Bureaucrat estagiario("Arthur", 150);
-        AForm formB("Acesso ao Servidor", 50, 50);
+        Bureaucrat chefe("Zaphod", 1);
+        RobotomyRequestForm robo("Bender");
+
+        chefe.signForm(robo);
         
-        std::cout << formB << std::endl;
-        
- 
-        estagiario.signAForm(formB); 
-        
-        std::cout << formB << std::endl;
+        chefe.executeForm(robo);
+        chefe.executeForm(robo);
+        chefe.executeForm(robo);
     } catch (std::exception &e) {
-        std::cerr << "Erro inesperado na execucao: " << e.what() << std::endl;
+        std::cerr << "Erro fatal: " << e.what() << std::endl;
     }
+
+    std::cout << "\n--- TESTE 3: PRESIDENTIAL PARDON FORM ---" << std::endl;
+    try {
+        Bureaucrat chefe("Zaphod", 1);
+        Bureaucrat medio("Ford", 20); 
+        PresidentialPardonForm pardon("Marvin");
+
+        medio.signForm(pardon);
+        medio.executeForm(pardon);
+        chefe.executeForm(pardon);
+    } catch (std::exception &e) {
+        std::cerr << "Erro fatal: " << e.what() << std::endl;
+    }
+
+    std::cout << "\n=============================================" << std::endl;
+    std::cout << "Fim dos testes burocráticos!" << std::endl;
+    std::cout << "=============================================\n" << std::endl;
 
     return 0;
 }

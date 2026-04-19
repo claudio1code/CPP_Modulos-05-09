@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 23:21:01 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 23:38:05 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/19 00:04:14 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,5 +31,5 @@ PresidentialPardonForm::~PresidentialPardonForm() {}
 
 void PresidentialPardonForm::execute(Bureaucrat const & executor) const {
 	this->checkExecution(executor);
-	std::cout << _target << " has been pardoned by Zaphod Beeblebrox." << std::endl;
+	std::cout << _target << " foi perdoado por Zaphod Beeblebrox." << std::endl;
 }

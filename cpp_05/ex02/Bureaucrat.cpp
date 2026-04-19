@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 20:29:01 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 23:35:12 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/19 00:02:52 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,22 +56,22 @@ void Bureaucrat::executeForm(AForm const &form)
 {
 	try {
 		form.execute(*this);
-		std::cout << _name << " executed " << form.getName() << std::endl;
+		std::cout << this->_name << " executou " << form.getName() << std::endl;
 	}
 	catch (const std::exception& e) {
-		std::cout << _name << " couldn't execute " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->_name << " não pode executar " << form.getName() << " porquê " << e.what() << std::endl;
+
 	}
 }
 
-void Bureaucrat::signForm(AForm& form)
-{
+void                Bureaucrat::signForm(AForm& form){
 	try
 	{
 		form.beSigned(*this);
-		std::cout << this->_name << " signed " << form.getName() << std::endl;
+		std::cout << this->_name << " assinou " << form.getName() << std::endl;
 	}
 	catch (const std::exception& e) {
-		std::cout << this->_name << " couldn't sign " << form.getName() << " because " << e.what() << std::endl;
+		std::cout << this->_name << " não pode assinar " << form.getName() << " porquê " << e.what() << std::endl;
 	}
 }
 

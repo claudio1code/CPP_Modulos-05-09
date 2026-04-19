@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 21:18:41 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/19 00:59:14 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/19 01:07:07 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,13 @@
 #include "Intern.hpp"
 #include "AForm.hpp"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 int main() {
     std::cout << "\n--- TESTE 1: A Fabrica do Estagiario ---" << std::endl;
     
+    std::srand(time(NULL));
     Intern estagiarioZe;
     AForm* rrf;
     AForm* scf;

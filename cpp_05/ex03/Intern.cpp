@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/19 00:40:32 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/19 00:52:05 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/19 01:04:24 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,11 @@ AForm* Intern::makeForm(std::string name, std::string target) {
 
 	for (int i = 0; i < 3; i++) {
 		if (names[i] == name) {
-			std::cout << "Estágiario cria " << name << std::endl;
+			std::cout << "Estagiário cria " << name << std::endl;
 			return (this->*creators[i])(target);
 		}
 	}
 
-	std::cout << "Error: Estágiario não pode criar " << name << ", porquê não existe." << std::endl;
+	std::cout << "Error: Estagiário não pode criar " << name << ", porquê não existe." << std::endl;
 	return NULL;
 }

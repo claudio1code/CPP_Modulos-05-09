@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 22:09:31 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 22:17:31 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/18 23:06:22 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void Form::beSigned(const Bureaucrat& bureaucrat)
 }
 
 const char* Form::GradeTooHighException::what() const throw() {
-	return ("Grade is high demais");
+	return ("Grade is too high");
 }
 
 const char* Form::GradeTooLowException::what() const throw() {
@@ -64,12 +64,12 @@ const char* Form::GradeTooLowException::what() const throw() {
 }
 
 std::ostream& operator<<(std::ostream& os, const Form& obj) {
-	os << "Form " << obj.getName() << " is ";
+	os << "O formulario de " << obj.getName();
 	if (obj.getSigned())
-		os << "signed";
+		os << " está assinado ";
 	else
-		os << "not signed";
-	os << " and requires grade " << obj.getSign() << " to sign and grade ";
-	os << obj.getExec() << " to execute" << std::endl;
+		os << " não está assinado ";
+	os << " e requer nota " << obj.getSign() << " para assinar e nota ";
+	os << obj.getExec() << " para executar" << std::endl;
 	return (os);
 }

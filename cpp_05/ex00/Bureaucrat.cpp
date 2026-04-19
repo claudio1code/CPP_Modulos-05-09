@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 20:29:01 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 21:28:54 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/18 22:51:33 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ Bureaucrat::Bureaucrat(std::string const &name, int grade) : _name(name){
     if (grade < 1)
         throw GradeTooHighException();
     if (grade > 150)
-        throw GradeTooHighException();
+        throw GradeTooLowException();
     this->_grade = grade;
 }
 

@@ -6,7 +6,7 @@
 /*   By: claudio <claudio@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 21:18:41 by claudio           #+#    #+#             */
-/*   Updated: 2026/04/18 23:56:17 by claudio          ###   ########.fr       */
+/*   Updated: 2026/04/19 01:06:08 by claudio          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,11 @@
 #include "ShrubberyCreationForm.hpp"
 #include "RobotomyRequestForm.hpp"
 #include "PresidentialPardonForm.hpp"
+#include <cstdlib>
+#include <ctime>
 
 int main() {
+    std::srand(time(NULL));
     std::cout << "\n--- TESTE 1: SHRUBBERY CREATION FORM ---" << std::endl;
     try {
         Bureaucrat chefe("Zaphod", 1);

@@ -74,7 +74,7 @@ void ScalarConverter::convert(const std::string& literal) {
             } 
             std::cout << "int: " << i << std::endl;
             std::cout << std::fixed << std::setprecision(1);
-            std::cout << "float: " << f << std::endl;
+            std::cout << "float: " << f << "f" << std::endl;
             std::cout << "double: " << d << std::endl;
             break;
         }
@@ -93,12 +93,12 @@ void ScalarConverter::convert(const std::string& literal) {
             }
             std::cout << "int: " << i << std::endl;
             std::cout << std::fixed << std::setprecision(1);
-            std::cout << "float: " << f << std::endl;
+            std::cout << "float: " << f << "f" << std::endl;
             std::cout << "double: " << d << std::endl;
             break;
         }
         case FLOAT:{
-            float f = std::atof(literal.c_str());
+            float f = static_cast<float>(std::atof(literal.c_str()));
             char c = static_cast<char>(f);
             int i = static_cast<int>(f);
             double d = static_cast<double>(f);
@@ -112,7 +112,7 @@ void ScalarConverter::convert(const std::string& literal) {
             }
             std::cout << "int: " << i << std::endl;
             std::cout << std::fixed << std::setprecision(1);
-            std::cout << "float: " << f << std::endl;
+            std::cout << "float: " << f << "f" << std::endl;
             std::cout << "double: " << d << std::endl;
             break;
         }
@@ -131,7 +131,7 @@ void ScalarConverter::convert(const std::string& literal) {
             }
             std::cout << "int: " << i << std::endl;
             std::cout << std::fixed << std::setprecision(1);
-            std::cout << "float: " << f << std::endl;
+            std::cout << "float: " << f << "f" << std::endl;
             std::cout << "double: " << d << std::endl;
             break;
         }

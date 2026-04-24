@@ -5,12 +5,12 @@ RED = \033[1;31m
 DEF_COLOR = \033[0;39m
 
 
-NAME = Bureucrat
+NAME = convert
 CXX = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
 
 
-SRCS = Bureaucrat.cpp main.cpp
+SRCS = ScalarConverter.cpp main.cpp
 OBJS_DIR = objs/
 
 OBJS = $(addprefix $(OBJS_DIR), $(SRCS:.cpp=.o))

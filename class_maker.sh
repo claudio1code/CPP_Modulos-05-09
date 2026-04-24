@@ -36,30 +36,20 @@ EOF
 cat << EOF > $CPP_NAME
 #include "$HPP_NAME"
 
-// Construtor Padrão
-$CLASS_NAME::$CLASS_NAME() {
-    std::cout << "$CLASS_NAME: Default constructor called" << std::endl;
-}
+$CLASS_NAME::$CLASS_NAME() {}
 
-// Construtor de Cópia
 $CLASS_NAME::$CLASS_NAME(const $CLASS_NAME& other) {
-    std::cout << "$CLASS_NAME: Copy constructor called" << std::endl;
     *this = other;
 }
 
-// Operador de Atribuição
 $CLASS_NAME& $CLASS_NAME::operator=(const $CLASS_NAME& other) {
-    std::cout << "$CLASS_NAME: Copy assignment operator called" << std::endl;
     if (this != &other) {
         // Copiar atributos aqui
     }
     return *this;
 }
 
-// Destrutor
-$CLASS_NAME::~$CLASS_NAME() {
-    std::cout << "$CLASS_NAME: Destructor called" << std::endl;
-}
+$CLASS_NAME::~$CLASS_NAME() {}
 EOF
 
 echo "✅ Classe $CLASS_NAME criada com sucesso ($HPP_NAME e $CPP_NAME)!"

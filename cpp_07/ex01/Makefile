@@ -5,7 +5,7 @@ RED = \033[1;31m
 DEF_COLOR = \033[0;39m
 
 
-NAME = whatever
+NAME = iter
 CXX = c++
 FLAGS = -Wall -Wextra -Werror -std=c++98
 

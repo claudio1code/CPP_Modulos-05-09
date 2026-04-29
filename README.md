@@ -532,6 +532,67 @@ public:
 
 ---
 
+## Module 09: Data Processing & File I/O
+
+Module 09 focuses on practical data processing, file I/O operations, and building robust applications that handle real-world data formats.
+
+#### ex00: BitcoinExchange - Financial Data Processing
+
+##### Data Processing Pipeline
+
+```
+CSV DATABASE → VALIDATION → RATE LOOKUP → OUTPUT CALCULATION
+data.csv      Date parsing    Find closest    Calculate value
+2011-01-03,0.5  Format check   earlier date   BTC × rate
+2011-01-04,0.6  Range check    in database    Display result
+```
+
+##### Key Concept: Data Validation & Processing
+
+```cpp
+class BitcoinExchange {
+private:
+    std::map<std::string, float> _data;  // date → exchange rate
+    
+public:
+    void loadDatabase(const std::string& filename) {
+        std::ifstream file(filename.c_str());
+        std::string line;
+        std::getline(file, line);  // Skip header
+        
+        while (std::getline(file, line)) {
+            size_t comma = line.find(',');
+            std::string date = line.substr(0, comma);
+            float rate = std::atof(line.substr(comma + 1).c_str());
+            _data[date] = rate;
+        }
+    }
+    
+    bool isValidDate(const std::string& date) {
+        // YYYY-MM-DD format validation
+        if (date.length() != 10 || date[4] != '-' || date[7] != '-')
+            return false;
+        
+        int year = std::atoi(date.substr(0, 4).c_str());
+        int month = std::atoi(date.substr(5, 2).c_str());
+        int day = std::atoi(date.substr(8, 2).c_str());
+        
+        // Range and calendar validation
+        return (year >= 2009 && year <= 2026 && 
+                month >= 1 && month <= 12 && 
+                day >= 1 && day <= 31);
+    }
+};
+```
+
+##### Why This Matters
+
+**Data processing** is fundamental to real-world applications. This exercise teaches file I/O, CSV parsing, data validation, and error handling - skills essential for any software that processes external data.
+
+**Real-World Impact**: Financial systems process massive amounts of data daily. Trading platforms analyze historical price data, banks process transaction records, and accounting systems import/export financial data. The same patterns apply to weather data processing, inventory management, and log analysis systems.
+
+---
+
 ```cpp
 // Custom exception hierarchy
 class MyException : public std::exception {
@@ -682,7 +743,8 @@ CPP_Modulos-05-09/
 │   ├── ex00/        # easyfind and iterators
 │   ├── ex01/        # Span and algorithmic efficiency
 │   └── ex02/        # MutantStack
-└── cpp_09/          # Advanced C++ Concepts
+└── cpp_09/          # Data Processing & File I/O
+    ├── ex00/        # BitcoinExchange - Financial Data Processing
     └── [Coming soon]
 ```
 

@@ -23,7 +23,7 @@ bool BitcoinExchange::isValidDate(const std::string& date) {
     int month = std::atoi(date.substr(5, 2).c_str());
     int day = std::atoi(date.substr(8, 2).c_str());
 
-    if (year < 2009 || year > 2023) {
+    if (year < 2009 || year > 2026) {
         return false;
     }
     if (month < 1 || month > 12) {
@@ -68,7 +68,7 @@ void BitcoinExchange::processInput(const std::string& filename) {
     std::ifstream file(filename.c_str());
     if (!file.is_open()){
         throw std::runtime_error("Could not open file: " + filename);
-        return;}
+    }
     
     std::string line;
     std::getline(file, line);

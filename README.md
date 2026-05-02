@@ -1,6 +1,19 @@
-# C++ Modules 05-08: Advanced Technical Study Guide
+# C++ Modules 05-09: Advanced Technical Study Guide
 
-This document is a comprehensive pedagogical resource designed to explain the architectural decisions, memory models, and real-world applications of the concepts covered in the C++ modules (05-08).
+This document is a comprehensive pedagogical resource designed to explain the architectural decisions, memory models, and real-world applications of the concepts covered in the C++ modules (05-09).
+
+## Contents
+
+- [Module 05 – Exception handling](#module-05-exception-handling--defensive-programming)
+- [Module 06 – Type system & casts](#module-06-the-c-type-system-casting)
+- [Module 07 – Templates](#module-07-templates-generic-programming)
+- [Module 08 – STL](#module-08-the-stl-trinity-containers-iterators-algorithms)
+- [Module 09 – Data processing](#module-09-data-processing--file-io)
+- [Appendix – Quick reference](#appendix-quick-reference)
+- [Project structure](#project-structure)
+- [Compilation & usage](#compilation--usage)
+- [Learning path](#learning-path)
+- [Best practices](#best-practices-summary)
 
 ---
 
@@ -78,7 +91,7 @@ public:
 
 **Class invariants** are rules that must always be true for an object. When a grade goes outside [1, 150], the object becomes invalid. By throwing exceptions in constructors, we prevent invalid objects from ever existing.
 
-**Real-World Impact**: Banking systems use the same principle - account balances can never be negative. If a withdrawal would cause an overdraft, an exception prevents the operation, protecting financial integrity. This prevents subtle bugs that could corrupt system state.
+**Real-World Impact**: The same idea appears wherever **hard invariants** matter—inventory quantities that cannot go negative, licensed seats that cannot be oversold, or audit counters that must stay consistent. If an operation would violate the rule, rejecting it keeps the object valid.
 
 #### ex01: Form Validation & Execution Chain
 
@@ -419,13 +432,15 @@ public:
 
 ## Module 08: The STL Trinity (Containers, Iterators, Algorithms)
 
+### Overview
+
 The Standard Template Library (STL) is built on three pillars. Understanding how they interact is the key to modern C++.
 
 1.  **Containers**: Where the data lives (`std::vector`, `std::list`).
 2.  **Iterators**: The "bridge" or "universal pointer" that moves through the container.
 3.  **Algorithms**: The logic that processes the data (`std::find`, `std::sort`).
 
-### ex00: easyfind - Generic Search with Iterators
+#### ex00: easyfind - Generic Search with Iterators
 
 ##### Iterator Categories
 
@@ -458,7 +473,7 @@ auto it2 = easyfind(lst, 42);  // Bidirectional iterator
 
 **Real-World Impact**: Database query engines use this pattern. The same search logic works across B-trees, hash tables, and sorted arrays without knowing the internal implementation. This enables flexible data storage while maintaining consistent query interfaces.
 
-### ex01: Span - Algorithmic Complexity & Optimization
+#### ex01: Span - Algorithmic Complexity & Optimization
 
 ##### Algorithm Comparison
 
@@ -495,7 +510,7 @@ public:
 
 **Real-World Impact**: Financial market analysis systems process millions of price updates to detect arbitrage opportunities. Efficient algorithms are critical - a slow algorithm means missing profitable trades that disappear in milliseconds.
 
-### ex02: MutantStack - Container Extension & Iterator Design
+#### ex02: MutantStack - Container Extension & Iterator Design
 
 ##### MutantStack Architecture
 
@@ -591,7 +606,284 @@ public:
 
 **Real-World Impact**: Financial systems process massive amounts of data daily. Trading platforms analyze historical price data, banks process transaction records, and accounting systems import/export financial data. The same patterns apply to weather data processing, inventory management, and log analysis systems.
 
+#### ex01: RPN - Reverse Polish Notation & Stack Operations
+
+##### Postfix Expression Evaluation: Step-by-Step
+
+Example Expression: `"8 9 * 2 -"`
+
+```text
+[1] Read '8'       [2] Read '9'       [3] Read '*'       [4] Read '2'       [5] Read '-'
+(Push 8)           (Push 9)           (Pop 9, Pop 8)     (Push 2)           (Pop 2, Pop 72)
+                                      (8 * 9 = 72)                          (72 - 2 = 70)
+                                      (Push 72)                             (Push 70)
+
+|      |           |  9   |           |      |           |  2   |           |      |
+|  8   |   --->    |  8   |   --->    |  72  |   --->    |  72  |   --->    |  70  |
++------+           +------+           +------+           +------+           +------+
+ Stack              Stack              Stack              Stack              Stack
+```
+
+##### Key Concept: LIFO Data Processing
+
+```cpp
+class RPN {
+public:
+    void calculate(const std::string& expression) {
+        std::stack<int> stack;
+        for (size_t i = 0; i < expression.length(); ++i) {
+            char c = expression[i];
+            if (std::isdigit(c)) {
+                stack.push(c - '0');
+            } else if (isOperator(c)) {
+                int b = stack.top(); stack.pop();
+                int a = stack.top(); stack.pop();
+                stack.push(performOperation(c, a, b));
+            }
+        }
+        std::cout << stack.top() << std::endl;
+    }
+};
+```
+
+##### Why This Matters
+
+**Reverse Polish Notation (RPN)** eliminates the need for parentheses in mathematical expressions. By using a stack (LIFO - Last In, First Out structure), operations are inherently ordered by their position in the expression. This is a classic algorithm that demonstrates the practical application of stack data structures.
+
+**Real-World Impact**: Postfix notation is heavily used in compiler design and execution environments. The Java Virtual Machine (JVM) and many other virtual machines are stack-based, meaning they internally compile standard expressions into something very similar to RPN for efficient execution.
+
+#### ex02: PmergeMe - Ford-Johnson Merge-Insert Sort
+
+##### Processing Pipeline
+
+```
+CLI ARGS (positive integers)  →  parse & validate  →  copy into std::vector and std::deque
+                                                           ↓
+                                              fordJohnsonSort on each container
+                                                           ↓
+                                    print Before / After, timing in microseconds
+```
+
+##### Visual: Two Copies, Same Algorithm
+
+`parseInput` fills **both** containers with the **same integers**. Timings measure **how each structure** performs the **same** logical steps—not two different sorts.
+
+```
+      argv[1] argv[2] ... argv[n]
+                 │
+                 │  push_back (duplicate values)
+                 ├──────────────────────┬──────────────────────┐
+                 ▼                      ▼                      │
+         ┌───────────────┐    ┌───────────────┐               │
+         │  std::vector  │    │  std::deque   │               │
+         │  _vector      │    │  _deque       │               │
+         │  [ same seq ] │    │  [ same seq ] │               │
+         └───────┬───────┘    └───────┬───────┘               │
+                 │                    │                        │
+          fordJohnsonSort      fordJohnsonSort                 │
+          (timed separately)   (timed separately)              │
+                 │                    │                        │
+                 ▼                    ▼                        │
+           sorted ints           sorted ints                  │
+           (must match)          (must match)                 │
+                 └────────────────────┘                      │
+                          │                                  │
+                          ▼                                  │
+                   print + compare us ◄───────────────────────┘
+```
+
+##### Visual: Merge-Insert Shape (this exercise)
+
+```
+  ORIGINAL SEQUENCE (even length shown; odd ⇒ stash last element as STRAGGLER)
+         │
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  PAIRING          winner = max(a,b) drawn on the LEFT     │
+  │   (a,b) ──► (winner, loser)                               │
+  └──────────────────────────────────────────────────────────┘
+         │
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  SORT PAIRS by winner  →  increasing winners             │
+  └──────────────────────────────────────────────────────────┘
+         │
+         ▼
+      winners ──► MAIN CHAIN (ordered skeleton)
+      losers  ──► PENDENTS (parallel list, still unsorted)
+         │
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  INSERT pendents[0] at FRONT of main chain                │
+  └──────────────────────────────────────────────────────────┘
+         │
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  JACOBSTHAL BATCHES: for each batch, insert pendents      │
+  │  inside the batch from BACK → FRONT; each insert uses   │
+  │  BINARY SEARCH (lower_bound) on the CURRENT main chain    │
+  └──────────────────────────────────────────────────────────┘
+         │
+         ▼
+  ┌──────────────────────────────────────────────────────────┐
+  │  INSERT STRAGGLER last (if any) via binary search          │
+  └──────────────────────────────────────────────────────────┘
+         │
+         ▼
+  container := sorted sequence     (assign back to vector or deque)
+```
+
+##### Key Concept: Ford-Johnson Merge-Insert (Theory)
+
+**Merge-insert sort** (the family Ford and Johnson analyzed) builds a sorted structure by repeatedly **inserting** elements into an already ordered “chain” using as few **pairwise comparisons** as possible in the worst case. The full theoretical algorithm is subtle; subject exercises usually implement a **recognizable** variant: pair elements, sort the **leaders** (winners), treat that order as the **main chain**, then insert the **followers** (losers / pendents) in a **Jacobsthal-driven order**, using **binary search** to pick each insertion point. The Jacobsthal schedule matters because the order in which you insert pending elements changes how many comparisons you need against the growing main chain.
+
+##### Phases in This Program (aligned with the code)
+
+1. **Straggler** — If the size is odd, remove the last element temporarily; it will be merge-inserted at the end.
+2. **Pair and orient** — Walk the remaining sequence in pairs `(a, b)`; swap so the **winner** (larger) is on the left. Each pair becomes `(winner, loser)`.
+3. **Order pairs by winner** — Sort the `pairs` array so `pair.first` (winner) values are non-decreasing. (Implementations often use a simple sort here; a stricter variant would recurse with Ford-Johnson on the winners.)
+4. **Split** — **Main chain** = all winners in that sorted order. **Pendents** = all losers in the **same pair order** (parallel to the winners).
+5. **First loser for free** — Insert `pendents[0]` at the **front** of the main chain (classic merge-insert step).
+6. **Jacobsthal blocks** — For each “batch”, take a prefix size given by a **Jacobsthal index**, and insert the corresponding pendents **from the end of that batch backward to the start** (inside the batch). For each value, `std::lower_bound` on the **current** main chain finds the insert position; `insert` places the integer there.
+7. **Straggler again** — If step 1 saved one, binary-insert it into the final chain.
+8. **Replace** — `container = mainChain` writes the sorted sequence back into the original container object.
+
+```cpp
+template <typename Container>
+void PmergeMe::fordJohnsonSort(Container& container) {
+    if (container.size() < 2) return;
+    // straggler → pairs (winner left) → sort pairs by winner
+    // mainChain + pendents → insert pendents[0] at begin
+    // Jacobsthal batches, backward within batch → lower_bound + insert
+    // straggler → container = mainChain
+}
+```
+
+##### Visual: Tiny Example `3 1 4 2` (even length — no straggler)
+
+```
+Step 0 — values live inside the container (order = argv order)
+    index:    0     1     2     3
+           ┌─────┬─────┬─────┬─────┐
+           │  3  │  1  │  4  │  2  │
+           └─────┴─────┴─────┴─────┘
+
+Step 1 — pair & orient (larger on the left = WINNER)
+           pair 0        pair 1
+         ┌─────────┐   ┌─────────┐
+         │ 3     1 │   │ 4     2 │     losers tagged below winners
+         │ WIN LOS │   │ WIN LOS │
+         └─────────┘   └─────────┘
+
+Step 2 — sort pairs by WINNER (3 before 4)
+         ┌─────────┐   ┌─────────┐
+         │ 3     1 │   │ 4     2 │
+         └─────────┘   └─────────┘
+
+Step 3 — split into MAIN CHAIN (winners) and PENDENTS (losers)
+    MAIN CHAIN          PENDENTS
+    ┌─────┬─────┐       ┌─────┬─────┐
+    │  3  │  4  │       │  1  │  2  │
+    └─────┴─────┘       └─────┴─────┘
+
+Step 4 — insert pendents[0] (=1) at the FRONT
+    ┌─────┬─────┬─────┐
+    │  1  │  3  │  4  │
+    └─────┴─────┴─────┘
+
+Step 5 — remaining pendents via Jacobsthal schedule + lower_bound + insert
+    (exact inner loop depends on getJacobsthalNumber); end state:
+    ┌─────┬─────┬─────┬─────┐
+    │  1  │  2  │  3  │  4  │
+    └─────┴─────┴─────┴─────┘
+```
+
+The **pattern** matters more than this single arithmetic: winners define the **skeleton**; losers are **folded in** using **Jacobsthal order** and **binary-search positions**.
+
+##### Visual: Odd Length — Straggler on the Side
+
+```
+  Before pairing:  ...  [ last element alone ]  ◄── STRAGGLER (removed first)
+                           │
+                           └── inserted ONLY after all pendents are merged
+```
+
+##### Same Integers in `std::vector` and `std::deque` — What Actually Differs
+
+After **`parseInput`**, both `_vector` and `_deque` hold **the same sequence of values**—two independent copies. **`execute`** runs **`fordJohnsonSort`** once on the vector and once on the deque. The **logical** placement of numbers (which comparisons, which insert order) is the **same** for both runs.
+
+What changes is **how the container stores and mutates** that sequence:
+
+| Aspect | `std::vector<int>` | `std::deque<int>` |
+|--------|---------------------|-------------------|
+| **Memory layout** | Single contiguous buffer (plus capacity); elements sit at consecutive addresses. | Typically **chunked**: fixed-size blocks chained together; subscript still O(1), but not one flat array. |
+| **`push_back`** | Amortized O(1); may **reallocate** and move the whole buffer when capacity grows. | O(1) at ends; new elements often go into the current back chunk without moving the rest of the sequence. |
+| **`insert` in the middle** | May shift all elements after the insertion point; can trigger **reallocation** if size hits capacity—moves many `int`s in one contiguous slab. | Inserts into a block structure; avoids shifting the **entire** sequence like one big array, but iterator chasing and block splits have their own costs. |
+| **Why your timings differ** | Sorting this way does many **inserts** into a growing chain; vector pays for **moves/copies** in a tight buffer. Deque pays a different mix (block logic). Either can “win” depending on *n*, hardware, and allocator—hence measuring both. |
+
+##### Visual: `std::vector` — One Slab, Insert Shifts the Tail
+
+Conceptually one contiguous array (plus spare **capacity**). Inserting in the **middle** slides everything to the right in that slab—fast for cache **reads**, expensive when the tail is long.
+
+```
+  low address                                                          high address
+      │                                                                     │
+      ▼                                                                     ▼
+  ┌───────┬───────┬───────┬───────┬───────┬ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ┐
+  │  ...  │  ...  │  ...  │  ...  │  ...  │   unused capacity (maybe)   │
+  └───┬───┴───┬───┴───┬───┴───┬───┴───┬───┴───────────────────────────────┘
+      │       │       │       │       │
+      └───────┴───────┴───────┴───────┴──► single contiguous block of ints
+
+  insert(X) here ──►   ┌───┐
+                       │ X │  forces tail elements →→→ (shift right in place)
+                       └───┘
+```
+
+##### Visual: `std::deque` — Chunks Linked Together
+
+Not guaranteed to be one flat array. New storage can be **another block**; **middle insert** splices into a chunk or spills—**no single “shift the whole world right”** like one vector slab, but pointer bookkeeping and possible block splits have their own cost.
+
+```
+        chunk (fixed-ish size, implementation-defined)
+      ┌─────┬─────┬─────┬─────┐         ┌─────┬─────┬─────┐
+      │ ... │ ... │ ... │ ... │ ──────► │ ... │ ... │ ... │ ───► ...
+      └─────┴─────┴─────┴─────┘         └─────┴─────┴─────┘
+           ▲ middle insert may touch ONE chunk / neighbors
+             instead of sliding the entire sequence as one piece
+```
+
+##### Visual: Why Both Containers Run the Same Logic but Different “Physics”
+
+Your code builds a temporary **main chain** and repeatedly **`insert`s** into it. Same **comparison / insert order** for vector and deque; different **bytes moved** and **allocator traffic**:
+
+```
+  fordJohnsonSort(vector)          fordJohnsonSort(deque)
+         │                                │
+         ▼                                ▼
+  contiguous mainChain             chunked mainChain
+  insert → shift tail / maybe      insert → block ops
+           resize whole buffer              (different profile)
+         │                                │
+         └────────────┬───────────────────┘
+                      ▼
+          same sorted permutation of ints
+          (print + compare microseconds)
+```
+
+So the numbers are **not** distributed differently in a mathematical sense (both runs should produce the **same sorted output** for the same input). They are **laid out differently in memory** and pay **different mechanical costs** for the same sequence of `insert` / `lower_bound` operations—exactly what the exercise asks you to observe with microsecond timings.
+
+##### Why This Matters
+
+The assignment pairs a **comparison-optimal style** sort with **two STL sequence containers** so you see that **big-O is not the whole story**: after `parseInput`, both structures hold duplicate data, yet **`fordJohnsonSort`** stresses **insert** and **search** differently under the hood. Profiling with `gettimeofday` turns that into concrete microseconds.
+
+**Real-World Impact**: Teams routinely benchmark several containers or memory layouts for the same algorithm on realistic inputs—database merge steps, indexed logs, game engines—because constant factors and cache behavior often decide which implementation ships.
+
 ---
+
+## Appendix: Quick Reference
+
+*Snippets marked as C++11 or later (e.g. smart pointers) go beyond the typical 42 C++98 subject; they are here for learning after the core modules.*
 
 ```cpp
 // Custom exception hierarchy
@@ -736,16 +1028,17 @@ CPP_Modulos-05-09/
 │   ├── ex01/        # Serialization
 │   └── ex02/        # RTTI and identification
 ├── cpp_07/          # Templates (Generic Programming)
-│   ├── ex00/        # Generic functions
-│   ├── ex01/        # Function templates
-│   └── ex02/        # Custom containers
+│   ├── ex00/        # Function templates — generic algorithms
+│   ├── ex01/        # iter + higher-order / callable parameters
+│   └── ex02/        # Array — custom container, deep copy
 ├── cpp_08/          # STL Trinity
 │   ├── ex00/        # easyfind and iterators
 │   ├── ex01/        # Span and algorithmic efficiency
 │   └── ex02/        # MutantStack
 └── cpp_09/          # Data Processing & File I/O
     ├── ex00/        # BitcoinExchange - Financial Data Processing
-    └── [Coming soon]
+    ├── ex01/        # RPN - Reverse Polish Notation
+    └── ex02/        # PmergeMe - Ford-Johnson merge-insert, vector vs deque timing
 ```
 
 ## Compilation & Usage
@@ -788,7 +1081,7 @@ re: fclean all
 2. **Proceed to Module 06** - Understand C++ casting and type safety
 3. **Continue with Module 07** - Learn templates and generic programming
 4. **Master Module 08** - Dive into the STL and its components
-5. **Complete with Module 09** - Advanced concepts (when available)
+5. **Complete with Module 09** - Advanced Data Processing & File I/O
 
 Each module builds upon the previous one, creating a comprehensive understanding of modern C++ programming practices.
 
@@ -822,4 +1115,4 @@ Each module builds upon the previous one, creating a comprehensive understanding
 
 ---
 
-*This comprehensive study guide covers all essential C++ concepts from modules 05-08, providing both theoretical understanding and practical implementation examples. Use it as a reference throughout your learning journey and return to it whenever you need clarification on these fundamental C++ topics.*
+*This comprehensive study guide covers all essential C++ concepts from modules 05-09, providing both theoretical understanding and practical implementation examples. Use it as a reference throughout your learning journey and return to it whenever you need clarification on these fundamental C++ topics.*
